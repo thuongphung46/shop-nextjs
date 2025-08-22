@@ -103,7 +103,7 @@ export default function Navbar() {
             <div className="relative">
               <input
                 placeholder="Tìm sản phẩm..."
-                className="w-full rounded-2xl border border-border bg-card px-3 py-2 md:px-4 md:py-3 pr-10 md:pr-12 text-sm outline-none focus:ring-2 focus:ring-fuchsia-500"
+                className="w-full rounded-2xl border border-border bg-card px-3 py-2 md:px-4 md:py-3 pr-10 md:pr-12 text-base md:text-sm outline-none focus:ring-2 focus:ring-fuchsia-500"
                 disabled
               />
               <button

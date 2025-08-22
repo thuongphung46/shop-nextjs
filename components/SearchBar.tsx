@@ -16,10 +16,26 @@ export default function SearchBar() {
 
   function submit(e?: React.FormEvent) {
     e?.preventDefault();
-    const sp = new URLSearchParams(Array.from(searchParams.entries()));
-    if (q) sp.set("q", q);
-    else sp.delete("q");
-    router.push(pathname + "?" + sp.toString());
+
+    // If we have a search query, always go to home page for search results
+    if (q.trim()) {
+      const sp = new URLSearchParams();
+      sp.set("q", q.trim());
+      router.push("/?" + sp.toString());
+    } else {
+      // If no search query, just clear search params and stay on current page
+      const sp = new URLSearchParams(Array.from(searchParams.entries()));
+      sp.delete("q");
+      const queryString = sp.toString();
+      router.push(pathname + (queryString ? "?" + queryString : ""));
+    }
+  }
+
+  // Handle Enter key press
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      submit();
+    }
   }
 
   return (
@@ -28,8 +44,9 @@ export default function SearchBar() {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Tìm sản phẩm..."
-          className="w-full rounded-2xl border border-border bg-card px-3 py-2 md:px-4 md:py-3 pr-10 md:pr-12 text-sm outline-none focus:ring-2 focus:ring-fuchsia-500"
+          className="w-full rounded-2xl border border-border bg-card px-3 py-2 md:px-4 md:py-3 pr-10 md:pr-12 text-base md:text-sm outline-none focus:ring-2 focus:ring-fuchsia-500"
         />
         <button
           aria-label="Tìm"
