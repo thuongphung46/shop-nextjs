@@ -3,6 +3,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState, Suspense } from "react";
+import { usePathname } from "next/navigation";
 import ThemeToggle from "./ThemeToggle";
 import MiniCart from "./MiniCart";
 import Portal from "./Portal";
@@ -12,6 +13,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const pathname = usePathname();
 
   // Handle scroll behavior
   useEffect(() => {
@@ -21,18 +23,34 @@ export default function Navbar() {
       // Don't hide navbar when drawer is open
       if (open) return;
 
+      // Disable auto-hide scroll behavior only on product list page (home page)
+      // Allow auto-hide on product detail pages (/product/[id])
+      const isProductListPage = pathname === "/";
+      if (isProductListPage) {
+        setIsVisible(true);
+        ticking = false;
+        return;
+      }
+
       const currentScrollY = window.scrollY;
+      const scrollDifference = Math.abs(currentScrollY - lastScrollY);
+
+      // Only process if scroll difference is significant enough to avoid jitter
+      if (scrollDifference < 5) {
+        ticking = false;
+        return;
+      }
 
       if (currentScrollY < 10) {
         // Always show navbar when at the top
         setIsVisible(true);
       } else if (currentScrollY > lastScrollY) {
-        // Scrolling down - hide navbar only after 100px threshold
-        if (currentScrollY > 100) {
+        // Scrolling down - hide navbar only after 50px threshold
+        if (currentScrollY > 50) {
           setIsVisible(false);
         }
-      } else if (currentScrollY < lastScrollY) {
-        // Scrolling up - always show navbar immediately
+      } else {
+        // Scrolling up - show navbar immediately
         setIsVisible(true);
       }
 
@@ -51,7 +69,7 @@ export default function Navbar() {
     return () => {
       window.removeEventListener("scroll", requestTick);
     };
-  }, [lastScrollY, open]);
+  }, [lastScrollY, open, pathname]);
 
   // Lock scroll when drawer open
   useEffect(() => {

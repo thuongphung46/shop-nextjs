@@ -4,7 +4,7 @@ export type Product = {
   id: number;
   name: string;
   description: string;
-  price: number;
+  price: number; // Giá cho 1 đơn vị chuẩn
   stock: number;
   image: string;
   category: string;
@@ -12,6 +12,14 @@ export type Product = {
   tags?: string[];
   slug?: string;
   shortDescription?: string;
+  shopeeLink?: string;
+  tiktokShopLink?: string;
+  unit?: string; // Đơn vị tính: "gói", "kg", "lít"
+  unitOptions?: Array<{
+    value: number; // Số lượng (0.5, 1, 2, ...)
+    label: string; // Nhãn hiển thị ("0.5kg", "1kg", "1 gói")
+    price: number; // Giá cho lượng này
+  }>;
 };
 
 export const products: Product[] = [
@@ -28,6 +36,12 @@ export const products: Product[] = [
     rating: 4.6,
     tags: ["tiêu rừng", "gia vị", "tây nguyên", "tự nhiên"],
     slug: "gia-vi-tieu-rung",
+    shopeeLink:
+      "https://shopee.vn/Gia-vị-tiêu-rừng-Tây-Nguyên-i.123456789.987654321",
+    tiktokShopLink:
+      "https://vn.shop.tiktok.com/view/product/1234567890123456789",
+    unit: "gói",
+    unitOptions: [{ value: 1, label: "1 gói", price: 120000 }],
   },
   {
     id: 2,
@@ -35,13 +49,22 @@ export const products: Product[] = [
     description:
       "Mật ong nguyên chất 100% từ rừng tự nhiên, không qua chế biến hóa học. Được khai thác từ những tổ ong rừng hoang dã, giữ nguyên các enzyme và chất dinh dưỡng tự nhiên có lợi cho sức khỏe.",
     shortDescription: "Mật ong nguyên chất từ rừng tự nhiên.",
-    price: 250000,
+    price: 500000, // Giá gốc cho 1 lít
     stock: 12,
     image: "https://picsum.photos/seed/honey/640/480",
     category: "Mật ong",
     rating: 4.7,
     tags: ["mật ong", "nguyên chất", "rừng tự nhiên", "dinh dưỡng"],
     slug: "mat-ong-rung",
+    shopeeLink:
+      "https://shopee.vn/Mật-ong-rừng-nguyên-chất-i.234567890.876543210",
+    tiktokShopLink:
+      "https://vn.shop.tiktok.com/view/product/2345678901234567890",
+    unit: "lít",
+    unitOptions: [
+      { value: 0.5, label: "0.5 lít", price: 280000 },
+      { value: 1, label: "1 lít", price: 500000 },
+    ],
   },
   {
     id: 3,
@@ -78,12 +101,16 @@ export const products: Product[] = [
       "Mật ong từ hoa cà phê có hương thơm nhẹ nhàng và vị ngọt thanh mát. Được thu hái từ những vườn cà phê cao cấp Đà Lạt, sản phẩm mang trong mình hương vị đặc trưng của hoa cà phê.",
     shortDescription: "Hương thơm nhẹ, vị ngọt thanh.",
     price: 220000,
-    stock: 20,
+    stock: 0,
     image: "https://picsum.photos/seed/coffeehoney/640/480",
     category: "Mật ong",
     rating: 4.5,
     tags: ["mật ong", "hoa cà phê", "đà lạt", "thơm ngọt"],
     slug: "mat-ong-hoa-ca-phe",
+    shopeeLink:
+      "https://shopee.vn/Mật-ong-hoa-cà-phê-Đà-Lạt-i.345678901.765432109",
+    tiktokShopLink:
+      "https://vn.shop.tiktok.com/view/product/3456789012345678901",
   },
   // Thêm các loại mật ong khác
   {
@@ -149,13 +176,19 @@ export const products: Product[] = [
     description:
       "Thịt trâu sấy từ trâu rừng có thớ thịt chắc, ít mỡ và giàu protein. Được sấy khô tự nhiên và ướp gia vị vùng cao, tạo nên hương vị đậm đà đặc trưng của vùng núi.",
     shortDescription: "Thịt trâu rừng sấy chắc thịt, ít mỡ.",
-    price: 200000,
+    price: 850000, // Giá gốc cho 1kg
     stock: 15,
     image: "https://picsum.photos/seed/buffalo-jerky/640/480",
     category: "Thịt sấy",
     rating: 4.5,
     tags: ["thịt trâu", "trâu rừng", "chắc thịt", "vùng cao"],
     slug: "thit-trau-say",
+    unit: "kg",
+    unitOptions: [
+      { value: 0.5, label: "0.5kg", price: 470000 },
+      { value: 1, label: "1kg", price: 850000 },
+      { value: 2, label: "2kg", price: 1600000 },
+    ],
   },
   {
     id: 11,
@@ -249,12 +282,19 @@ export const products: Product[] = [
     description:
       "Gạo nếp nương được trồng trên ruộng bậc thang vùng cao, tưới bằng nước mưa tự nhiên. Hạt gạo dẻo thơm, có màu tím tự nhiên và giá trị dinh dưỡng cao, thích hợp nấu xôi và làm bánh.",
     shortDescription: "Gạo nếp nương tím tự nhiên thơm dẻo.",
-    price: 85000,
+    price: 120000, // Giá gốc cho 1kg
     stock: 60,
     image: "https://picsum.photos/seed/nep-nuong/640/480",
     category: "Gạo đặc sản",
     rating: 4.6,
     tags: ["gạo nếp", "nương", "tím tự nhiên", "vùng cao"],
     slug: "gao-nep-nuong",
+    unit: "kg",
+    unitOptions: [
+      { value: 0.5, label: "0.5kg", price: 65000 },
+      { value: 1, label: "1kg", price: 120000 },
+      { value: 2, label: "2kg", price: 220000 },
+      { value: 5, label: "5kg", price: 500000 },
+    ],
   },
 ];

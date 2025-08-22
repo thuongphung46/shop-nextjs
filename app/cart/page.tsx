@@ -58,10 +58,23 @@ export default function CartPage() {
                         className="w-16 h-12 rounded-md object-cover border border-border"
                       />
                       <div>
-                        <div>{it.name}</div>
-                        <div className="text-muted-foreground text-xs">
-                          {it.category} • Còn {it.stock}
+                        <div className="flex items-center gap-2">
+                          {it.name}
+                          {it.stock <= 0 && (
+                            <span className="px-2 py-1 text-xs bg-orange-500 text-white rounded-full">
+                              ĐẶT TRƯỚC
+                            </span>
+                          )}
                         </div>
+                        <div className="text-muted-foreground text-xs">
+                          {it.category} •{" "}
+                          {it.stock <= 0 ? "Hết hàng" : `Còn ${it.stock}`}
+                        </div>
+                        {it.stock <= 0 && (
+                          <div className="text-orange-600 text-xs font-medium mt-1">
+                            ⚠️ Giao hàng: 6-7 ngày, thanh toán trước
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td className="p-2">{currency(it.price)}</td>
@@ -70,7 +83,7 @@ export default function CartPage() {
                         className="w-20 rounded-xl border border-border bg-card px-2 py-1"
                         type="number"
                         min={1}
-                        max={it.stock}
+                        max={it.stock <= 0 ? 10 : it.stock}
                         value={it.quantity}
                         onChange={(e) =>
                           updateQty(it.id, Number(e.target.value))
@@ -105,10 +118,25 @@ export default function CartPage() {
                     className="w-16 h-16 rounded-md object-cover border border-border flex-shrink-0"
                   />
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-sm truncate">{it.name}</h3>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-medium text-sm truncate">
+                        {it.name}
+                      </h3>
+                      {it.stock <= 0 && (
+                        <span className="px-2 py-1 text-xs bg-orange-500 text-white rounded-full flex-shrink-0">
+                          ĐẶT TRƯỚC
+                        </span>
+                      )}
+                    </div>
                     <p className="text-muted-foreground text-xs">
-                      {it.category} • Còn {it.stock}
+                      {it.category} •{" "}
+                      {it.stock <= 0 ? "Hết hàng" : `Còn ${it.stock}`}
                     </p>
+                    {it.stock <= 0 && (
+                      <div className="text-orange-600 text-xs font-medium mt-1">
+                        ⚠️ Giao hàng: 6-7 ngày, thanh toán trước
+                      </div>
+                    )}
                     <div className="mt-2 flex items-center justify-between">
                       <span className="font-medium text-primary">
                         {currency(it.price)}
@@ -121,7 +149,7 @@ export default function CartPage() {
                           className="w-16 rounded-lg border border-border bg-background px-2 py-1 text-sm"
                           type="number"
                           min={1}
-                          max={it.stock}
+                          max={it.stock <= 0 ? 10 : it.stock}
                           value={it.quantity}
                           onChange={(e) =>
                             updateQty(it.id, Number(e.target.value))

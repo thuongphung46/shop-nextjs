@@ -21,9 +21,18 @@ export default function ProductCard({ product }: { product: Product }) {
         </Link>
         <h3 className="mt-3 font-semibold">{product.name}</h3>
         <div className="flex items-center justify-between text-sm mt-1">
-          <span className="text-success font-bold">
-            {currency(product.price)}
-          </span>
+          <div>
+            <span className="text-success font-bold">
+              {product.unitOptions && product.unitOptions.length > 1
+                ? `Từ ${currency(Math.min(...product.unitOptions.map((opt) => opt.price)))}`
+                : currency(product.price)}
+            </span>
+            {product.unit && (
+              <span className="text-muted-foreground text-xs ml-1">
+                /{product.unit}
+              </span>
+            )}
+          </div>
           <span className="text-muted-foreground">⭐ {product.rating}</span>
         </div>
         <p className="text-muted-foreground mt-1">{product.description}</p>
@@ -49,8 +58,13 @@ export default function ProductCard({ product }: { product: Product }) {
           <p className="text-xs text-muted-foreground">
             Giá từ:{" "}
             <span className="text-primary font-semibold">
-              {currency(product.price)}
+              {product.unitOptions && product.unitOptions.length > 1
+                ? currency(
+                    Math.min(...product.unitOptions.map((opt) => opt.price))
+                  )
+                : currency(product.price)}
             </span>
+            {product.unit && <span className="ml-1">/{product.unit}</span>}
           </p>
         </div>
       </Link>
