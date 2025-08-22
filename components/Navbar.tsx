@@ -10,12 +10,56 @@ import SearchBar from "./SearchBar";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  // Handle scroll behavior
+  useEffect(() => {
+    let ticking = false;
+
+    const controlNavbar = () => {
+      // Don't hide navbar when drawer is open
+      if (open) return;
+
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY < 10) {
+        // Always show navbar when at the top
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY) {
+        // Scrolling down - hide navbar only after 100px threshold
+        if (currentScrollY > 100) {
+          setIsVisible(false);
+        }
+      } else if (currentScrollY < lastScrollY) {
+        // Scrolling up - always show navbar immediately
+        setIsVisible(true);
+      }
+
+      setLastScrollY(currentScrollY);
+      ticking = false;
+    };
+
+    const requestTick = () => {
+      if (!ticking) {
+        requestAnimationFrame(controlNavbar);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", requestTick, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", requestTick);
+    };
+  }, [lastScrollY, open]);
 
   // Lock scroll when drawer open
   useEffect(() => {
     const html = document.documentElement;
     if (open) {
       html.style.overflow = "hidden";
+      // Always show navbar when drawer is open
+      setIsVisible(true);
     } else {
       html.style.overflow = "";
     }
@@ -25,7 +69,11 @@ export default function Navbar() {
   }, [open]);
 
   return (
-    <div className="sticky top-0 z-[4000] border-b border-border bg-background/80 backdrop-blur">
+    <div
+      className={`sticky top-0 z-[4000] border-b border-border bg-background/80 backdrop-blur transition-transform duration-300 ${
+        isVisible ? "transform translate-y-0" : "transform -translate-y-full"
+      }`}
+    >
       <div className="container py-2 flex items-center justify-between gap-2">
         <button
           onClick={() => setOpen(true)}
@@ -49,18 +97,18 @@ export default function Navbar() {
       </div>
 
       {/* search bar under logo */}
-      <div className="container pb-2 -mt-2">
+      <div className="container pb-1 pt-1">
         <Suspense
           fallback={
             <div className="relative">
               <input
                 placeholder="Tìm sản phẩm..."
-                className="w-full rounded-2xl border border-border bg-card px-4 py-3 pr-12 outline-none focus:ring-2 focus:ring-fuchsia-500"
+                className="w-full rounded-2xl border border-border bg-card px-3 py-2 md:px-4 md:py-3 pr-10 md:pr-12 text-sm outline-none focus:ring-2 focus:ring-fuchsia-500"
                 disabled
               />
               <button
                 aria-label="Tìm"
-                className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-2 rounded-xl border border-border"
+                className="absolute right-2 md:right-2 top-1/2 -translate-y-1/2 w-6 h-6 md:w-8 md:h-8 rounded-lg border border-border flex items-center justify-center text-xs md:text-sm"
               >
                 🔍
               </button>
