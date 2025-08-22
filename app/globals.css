@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base{
+  :root{
+    --background: 210 40% 98%;
+    --foreground: 222.2 47.4% 11.2%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 47.4% 11.2%;
+    --border: 214.3 31.8% 91.4%;
+    --primary: 268 95% 60%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 192 100% 41%;
+  }
+  .dark{
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 47.4% 11.2%;
+    --card-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --primary: 268 100% 70%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 192 100% 50%;
+  }
+  html, body { @apply h-full; }
+  body { @apply bg-background text-foreground; }
+}
+
+@layer components{
+  .btn-primary{@apply inline-flex items-center justify-center px-3 py-2 rounded-xl font-semibold text-sm bg-gradient-to-tr from-fuchsia-500 to-sky-400 text-black hover:opacity-90;}
+  .btn-secondary{@apply inline-flex items-center justify-center px-3 py-2 rounded-xl text-sm border border-border hover:bg-muted/20;}
+  .nav-item{@apply px-3 py-2 rounded-lg border border-border hover:bg-muted/20;}
+  .nav-sub{@apply px-3 py-1.5 rounded-lg hover:bg-muted/20;}
+  .nav-details>summary{list-style:none;}
+}
+
+/* fly-to-cart */
+.fly-item{
+  position: fixed;
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  background: radial-gradient(white, rgba(255,255,255,.3));
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,.25);
+  z-index: 9999;
+  transition: transform 1.0s cubic-bezier(.22,.61,.36,1), opacity 1.0s ease;
+  opacity: 1;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+[data-minicart].minicart-bump{ transform: scale(1.06); transition: transform .15s ease; }
