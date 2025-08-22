@@ -1,4 +1,6 @@
-# ShopPro – Full (Portal Drawer Z-Fix + Skeleton)
+<!-- @format -->
+
+# Shop Nhà Làm – Cửa hàng trực tuyến
 
 - Drawer + overlay render qua **Portal** (z-index rất cao) → không bị đè ở trang detail
 - Navbar sticky, **search dưới logo**
@@ -8,5 +10,6 @@
 - Cart & Checkout (MoMo stub)
 
 ## Run
+
 pnpm install
 pnpm dev
