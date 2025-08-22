@@ -1,0 +1,26 @@
+<svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d946ef;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0ea5e9;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Shop bag shape -->
+  <path d="M8 12L8 30C8 31.1046 8.89543 32 10 32L22 32C23.1046 32 24 31.1046 24 30L24 12" stroke="url(#gradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  
+  <!-- Bag handles -->
+  <path d="M12 12C12 9.79086 13.7909 8 16 8C18.2091 8 20 9.79086 20 12" stroke="url(#gradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  
+  <!-- Shop tag -->
+  <path d="M6 12L26 12L25 16L7 16L6 12Z" fill="url(#gradient)" opacity="0.8"/>
+  
+  <!-- Highlight dot -->
+  <circle cx="16" cy="14" r="1.5" fill="white"/>
+  
+  <!-- Text "Shop" -->
+  <text x="35" y="18" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="currentColor">Shop</text>
+  
+  <!-- Text "Nhà Làm" -->
+  <text x="35" y="30" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="url(#gradient)">Nhà Làm</text>
+</svg>
