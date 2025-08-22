@@ -1,7 +1,15 @@
-'use client';
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import type { Product } from '@/lib/products';
-import { coupons as allCoupons, type Coupon } from '@/lib/coupons';
+/** @format */
+
+"use client";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import type { Product } from "@/lib/products";
+import { coupons as allCoupons, type Coupon } from "@/lib/coupons";
 
 export type CartItem = Product & { quantity: number };
 
@@ -22,7 +30,7 @@ type CartState = {
 };
 
 const CartCtx = createContext<CartState | null>(null);
-const STORAGE_KEY = 'shoppro.portal.full.cart.v1';
+const STORAGE_KEY = "shoppro.portal.full.cart.v1";
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -45,60 +53,97 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   }, [items, coupon]);
 
-  function totalItems() { return items.reduce((a, b) => a + b.quantity, 0); }
-  function getQtyInCart(id: number) { return items.find(it => it.id === id)?.quantity ?? 0; }
+  function totalItems() {
+    return items.reduce((a, b) => a + b.quantity, 0);
+  }
+  function getQtyInCart(id: number) {
+    return items.find((it) => it.id === id)?.quantity ?? 0;
+  }
 
-  const api = useMemo(() => ({
-    items,
-    addItem: (p: Product, qty = 1) => {
-      setItems(prev => {
-        const existing = prev.find(it => it.id === p.id);
-        const currentQty = existing?.quantity ?? 0;
-        const nextQty = Math.min(currentQty + qty, p.stock);
-        if (!existing) return [...prev, { ...p, quantity: nextQty }];
-        return prev.map(it => (it.id === p.id ? { ...it, quantity: nextQty } : it));
-      });
-    },
-    removeItem: (id: number) => setItems(prev => prev.filter(it => it.id !== id)),
-    updateQty: (id: number, qty: number) => setItems(prev => prev.map(it => it.id === id ? { ...it, quantity: Math.max(1, Math.min(qty, it.stock)) } : it)),
-    clear: () => { setItems([]); setCoupon(null); },
-    subtotal: () => items.reduce((acc, it) => acc + it.price * it.quantity, 0),
-    shipping: () => {
-      const s = items.reduce((count, it) => count + it.quantity, 0);
-      return s === 0 ? 0 : 30000 + Math.max(0, s - 1) * 10000;
-    },
-    discount: () => {
-      const sub = items.reduce((acc, it) => acc + it.price * it.quantity, 0);
-      if (!coupon) return 0;
-      if (coupon.minSubtotal && sub < coupon.minSubtotal) return 0;
-      return coupon.type === 'percent' ? Math.floor(sub * coupon.value / 100) : Math.min(sub, coupon.value);
-    },
-    total: () => {
-      const sub = items.reduce((acc, it) => acc + it.price * it.quantity, 0);
-      const ship = items.length === 0 ? 0 : 30000 + Math.max(0, totalItems() - 1) * 10000;
-      const disc = (() => {
+  const api = useMemo(
+    () => ({
+      items,
+      addItem: (p: Product, qty = 1) => {
+        setItems((prev) => {
+          const existing = prev.find((it) => it.id === p.id);
+          const currentQty = existing?.quantity ?? 0;
+
+          // Cho phép thêm sản phẩm đặt trước (stock = 0), nhưng giới hạn tối đa là 10
+          const maxQty = p.stock <= 0 ? 10 : p.stock;
+          const nextQty = Math.min(currentQty + qty, maxQty);
+
+          if (!existing) return [...prev, { ...p, quantity: nextQty }];
+          return prev.map((it) =>
+            it.id === p.id ? { ...it, quantity: nextQty } : it
+          );
+        });
+      },
+      removeItem: (id: number) =>
+        setItems((prev) => prev.filter((it) => it.id !== id)),
+      updateQty: (id: number, qty: number) =>
+        setItems((prev) =>
+          prev.map((it) => {
+            if (it.id === id) {
+              // Cho phép cập nhật số lượng cho sản phẩm đặt trước (stock = 0), tối đa 10
+              const maxQty = it.stock <= 0 ? 10 : it.stock;
+              return { ...it, quantity: Math.max(1, Math.min(qty, maxQty)) };
+            }
+            return it;
+          })
+        ),
+      clear: () => {
+        setItems([]);
+        setCoupon(null);
+      },
+      subtotal: () =>
+        items.reduce((acc, it) => acc + it.price * it.quantity, 0),
+      shipping: () => {
+        const s = items.reduce((count, it) => count + it.quantity, 0);
+        return s === 0 ? 0 : 30000 + Math.max(0, s - 1) * 10000;
+      },
+      discount: () => {
+        const sub = items.reduce((acc, it) => acc + it.price * it.quantity, 0);
         if (!coupon) return 0;
         if (coupon.minSubtotal && sub < coupon.minSubtotal) return 0;
-        return coupon.type === 'percent' ? Math.floor(sub * coupon.value / 100) : Math.min(sub, coupon.value);
-      })();
-      return Math.max(0, sub + ship - disc);
-    },
-    applyCoupon: (code: string) => {
-      const c = allCoupons.find(x => x.code.toUpperCase() === code.trim().toUpperCase());
-      if (!c) return 'Mã không hợp lệ';
-      setCoupon(c);
-      return null;
-    },
-    coupon,
-    totalItems,
-    getQtyInCart,
-  }), [items, coupon]);
+        return coupon.type === "percent"
+          ? Math.floor((sub * coupon.value) / 100)
+          : Math.min(sub, coupon.value);
+      },
+      total: () => {
+        const sub = items.reduce((acc, it) => acc + it.price * it.quantity, 0);
+        const ship =
+          items.length === 0
+            ? 0
+            : 30000 + Math.max(0, totalItems() - 1) * 10000;
+        const disc = (() => {
+          if (!coupon) return 0;
+          if (coupon.minSubtotal && sub < coupon.minSubtotal) return 0;
+          return coupon.type === "percent"
+            ? Math.floor((sub * coupon.value) / 100)
+            : Math.min(sub, coupon.value);
+        })();
+        return Math.max(0, sub + ship - disc);
+      },
+      applyCoupon: (code: string) => {
+        const c = allCoupons.find(
+          (x) => x.code.toUpperCase() === code.trim().toUpperCase()
+        );
+        if (!c) return "Mã không hợp lệ";
+        setCoupon(c);
+        return null;
+      },
+      coupon,
+      totalItems,
+      getQtyInCart,
+    }),
+    [items, coupon]
+  );
 
   return <CartCtx.Provider value={api}>{children}</CartCtx.Provider>;
 }
 
 export function useCart() {
   const ctx = useContext(CartCtx);
-  if (!ctx) throw new Error('useCart must be used within CartProvider');
+  if (!ctx) throw new Error("useCart must be used within CartProvider");
   return ctx;
 }

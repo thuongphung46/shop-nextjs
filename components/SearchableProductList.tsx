@@ -18,7 +18,7 @@ export default function SearchableProductList() {
     const t = setTimeout(() => {
       setProducts(staticProducts);
       setLoading(false);
-    }, 6000);
+    }, 600);
     return () => clearTimeout(t);
   }, []);
 
