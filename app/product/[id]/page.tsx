@@ -1,57 +1,87 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { products } from '@/lib/products';
-import AddToCartButton from '@/components/AddToCartButton';
-import { currency } from '@/utils/format';
-import ImageWithSkeleton from '@/components/ImageWithSkeleton';
-import Skeleton from '@/components/Skeleton';
+/** @format */
 
-export default function ProductDetailPage(){
-  const params = useParams();
-  const id = Number(params?.id);
-  const [loading, setLoading] = useState(true);
-  const [product, setProduct] = useState(products.find(p => p.id === id));
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { products } from "@/lib/products";
+import ProductDetailClient from "@/components/ProductDetailClient";
 
-  useEffect(()=>{
-    const t = setTimeout(()=>{ setProduct(products.find(p => p.id === id)); setLoading(false); }, 500);
-    return () => clearTimeout(t);
-  }, [id]);
+type Props = {
+  params: { id: string };
+};
 
-  if (!product) return <div>Không tìm thấy sản phẩm.</div>;
+// Generate metadata for SEO
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const id = parseInt(params.id);
+  const product = products.find((p) => p.id === id);
 
-  return (
-    <div className="grid gap-4 md:grid-cols-2">
-      <ImageWithSkeleton src={product.image} alt={product.name} className="w-full h-80" />
-      <div>
-        {loading ? (
-          <>
-            <Skeleton className="h-7 w-1/2" />
-            <div className="flex items-center gap-2 mt-2">
-              <Skeleton className="h-5 w-24" />
-              <Skeleton className="h-5 w-24" />
-              <Skeleton className="h-5 w-16" />
-            </div>
-            <Skeleton className="h-4 w-full mt-3" />
-            <Skeleton className="h-4 w-5/6 mt-1" />
-            <Skeleton className="h-10 w-40 mt-3" />
-          </>
-        ) : (
-          <>
-            <h1 className="text-2xl font-bold">{product.name}</h1>
-            <div className="flex items-center gap-2 mt-2">
-              <span className="text-success font-bold">{currency(product.price)}</span>
-              {product.stock>0 ? <span className="px-2 py-0.5 rounded-full bg-fuchsia-500/20">Còn {product.stock}</span> : <span className="px-2 py-0.5 rounded-full bg-rose-500/20">Hết hàng</span>}
-              <span className="px-2 py-0.5 rounded-full bg-yellow-500/20">⭐ {product.rating}</span>
-            </div>
-            <p className="text-muted-foreground mt-2">{product.description}</p>
-            <div className="mt-3 flex gap-2">
-              <AddToCartButton product={product} />
-              <a href="/" className="btn-secondary">Quay lại</a>
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
+  if (!product) {
+    return {
+      title: "Sản phẩm không tồn tại - Shop Nhà Làm",
+      description: "Sản phẩm bạn tìm kiếm không tồn tại hoặc đã bị xóa.",
+    };
+  }
+
+  const title = `${product.name} - Shop Nhà Làm`;
+  const description = `${product.shortDescription || product.description} Giá chỉ từ ${product.price.toLocaleString("vi-VN")}₫. ${product.stock > 0 ? `Còn ${product.stock} sản phẩm trong kho.` : "Hết hàng."} Đánh giá ${product.rating}/5 sao.`;
+
+  const keywords = [
+    product.name,
+    product.category,
+    "shop nhà làm",
+    "sản phẩm thủ công",
+    "chất lượng cao",
+    product.category.toLowerCase(),
+    ...(product.tags || []),
+  ];
+
+  return {
+    title,
+    description,
+    keywords,
+    openGraph: {
+      title,
+      description,
+      images: [
+        {
+          url: product.image,
+          width: 640,
+          height: 480,
+          alt: product.name,
+        },
+      ],
+      type: "website",
+      siteName: "Shop Nhà Làm",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [product.image],
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+    alternates: {
+      canonical: `/product/${product.id}`,
+    },
+  };
+}
+
+// Generate static params for better performance
+export async function generateStaticParams() {
+  return products.map((product) => ({
+    id: product.id.toString(),
+  }));
+}
+
+export default function ProductDetailPage({ params }: Props) {
+  const id = parseInt(params.id);
+  const product = products.find((p) => p.id === id);
+
+  if (!product) {
+    notFound();
+  }
+
+  return <ProductDetailClient product={product} />;
 }
