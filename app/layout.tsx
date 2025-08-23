@@ -29,7 +29,7 @@ export default function RootLayout({
           <CartProvider>
             <Navbar />
             <CartAnimator />
-            <main className="container py-3">{children}</main>
+            <main className="container py-3 pt-32">{children}</main>
             <footer className="container py-10 text-sm text-muted-foreground text-center">
               Shop Nhà Làm © 2025 • Sản phẩm thủ công chất lượng
             </footer>

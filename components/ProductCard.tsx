@@ -46,7 +46,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
       {/* Mobile view - simplified */}
       <Link href={`/product/${product.id}`} className="md:hidden block">
-        <div className="p-3">
+        <div className="p-2">
           <ImageWithSkeleton
             src={product.image}
             alt={product.name}
