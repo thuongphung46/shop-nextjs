@@ -3,7 +3,6 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState, Suspense } from "react";
-import { usePathname } from "next/navigation";
 import ThemeToggle from "./ThemeToggle";
 import MiniCart from "./MiniCart";
 import Portal from "./Portal";
@@ -11,73 +10,14 @@ import SearchBar from "./SearchBar";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const pathname = usePathname();
 
-  // Handle scroll behavior
-  useEffect(() => {
-    let ticking = false;
-
-    const controlNavbar = () => {
-      // Don't hide navbar when drawer is open
-      if (open) return;
-
-      // Disable auto-hide scroll behavior only on product list page (home page)
-      // Allow auto-hide on product detail pages (/product/[id])
-      const isProductListPage = pathname === "/";
-      if (isProductListPage) {
-        setIsVisible(true);
-        ticking = false;
-        return;
-      }
-
-      const currentScrollY = window.scrollY;
-      const scrollDifference = Math.abs(currentScrollY - lastScrollY);
-
-      // Only process if scroll difference is significant enough to avoid jitter
-      if (scrollDifference < 5) {
-        ticking = false;
-        return;
-      }
-
-      if (currentScrollY < 10) {
-        // Always show navbar when at the top
-        setIsVisible(true);
-      } else if (currentScrollY > lastScrollY) {
-        // Scrolling down - hide navbar only after 50px threshold
-        if (currentScrollY > 50) {
-          setIsVisible(false);
-        }
-      } else {
-        // Scrolling up - show navbar immediately
-        setIsVisible(true);
-      }
-
-      setLastScrollY(currentScrollY);
-      ticking = false;
-    };
-
-    const requestTick = () => {
-      if (!ticking) {
-        requestAnimationFrame(controlNavbar);
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", requestTick, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", requestTick);
-    };
-  }, [lastScrollY, open, pathname]);
+  // Navbar is always visible - no scroll behavior
 
   // Lock scroll when drawer open
   useEffect(() => {
     const html = document.documentElement;
     if (open) {
       html.style.overflow = "hidden";
-      // Always show navbar when drawer is open
-      setIsVisible(true);
     } else {
       html.style.overflow = "";
     }
@@ -87,11 +27,7 @@ export default function Navbar() {
   }, [open]);
 
   return (
-    <div
-      className={`sticky top-0 z-[4000] border-b border-border bg-background/80 backdrop-blur transition-transform duration-300 ${
-        isVisible ? "transform translate-y-0" : "transform -translate-y-full"
-      }`}
-    >
+    <div className="fixed top-0 left-0 right-0 z-[4000] border-b border-border bg-background/80 backdrop-blur">
       <div className="container py-2 flex items-center justify-between gap-2">
         <button
           onClick={() => setOpen(true)}

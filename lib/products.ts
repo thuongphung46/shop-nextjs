@@ -187,7 +187,6 @@ export const products: Product[] = [
     unitOptions: [
       { value: 0.5, label: "0.5kg", price: 470000 },
       { value: 1, label: "1kg", price: 850000 },
-      { value: 2, label: "2kg", price: 1600000 },
     ],
   },
   {
