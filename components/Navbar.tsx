@@ -3,6 +3,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState, Suspense } from "react";
+import { useSession, signOut } from "next-auth/react";
 import ThemeToggle from "./ThemeToggle";
 import MiniCart from "./MiniCart";
 import Portal from "./Portal";
@@ -10,6 +11,7 @@ import SearchBar from "./SearchBar";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const { data: session, status } = useSession();
 
   // Navbar is always visible - no scroll behavior
 
@@ -45,6 +47,36 @@ export default function Navbar() {
           </span>
         </Link>
         <div className="flex items-center gap-2">
+          {status === "loading" ? (
+            <div className="w-8 h-8 border-2 border-muted border-t-primary rounded-full animate-spin" />
+          ) : session ? (
+            <div className="flex items-center gap-2">
+              {session.user?.image ? (
+                <img
+                  src={session.user.image}
+                  alt={session.user?.name || "User"}
+                  className="w-8 h-8 rounded-full border border-border"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full border border-border bg-muted flex items-center justify-center text-xs font-medium">
+                  {session.user?.name?.charAt(0)?.toUpperCase() || "U"}
+                </div>
+              )}
+              <button
+                onClick={() => signOut()}
+                className="hidden md:block text-sm px-3 py-1 rounded-xl border border-border hover:bg-muted/20"
+              >
+                Đăng xuất
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="hidden md:block text-sm px-3 py-2 rounded-xl border border-border hover:bg-muted/20"
+            >
+              Đăng nhập
+            </Link>
+          )}
           <ThemeToggle />
           <MiniCart />
         </div>
@@ -117,6 +149,56 @@ export default function Navbar() {
             <Link className="nav-item" href="/contact">
               Liên hệ
             </Link>
+
+            {/* Authentication section */}
+            <div className="border-t border-border pt-2 mt-2">
+              {status === "loading" ? (
+                <div className="nav-item">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    <span>Đang tải...</span>
+                  </div>
+                </div>
+              ) : session ? (
+                <div className="space-y-1">
+                  <div className="nav-item">
+                    <div className="flex items-center gap-2">
+                      {session.user?.image ? (
+                        <img
+                          src={session.user.image}
+                          alt={session.user?.name || "User"}
+                          className="w-6 h-6 rounded-full border border-border"
+                        />
+                      ) : (
+                        <div className="w-6 h-6 rounded-full border border-border bg-muted flex items-center justify-center text-xs font-medium">
+                          {session.user?.name?.charAt(0)?.toUpperCase() || "U"}
+                        </div>
+                      )}
+                      <span className="text-sm font-medium">
+                        {session.user?.name || "User"}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      signOut();
+                      setOpen(false);
+                    }}
+                    className="nav-item text-left w-full text-red-600"
+                  >
+                    Đăng xuất
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  className="nav-item text-primary font-medium"
+                  href="/login"
+                  onClick={() => setOpen(false)}
+                >
+                  Đăng nhập
+                </Link>
+              )}
+            </div>
           </nav>
         </aside>
       </Portal>

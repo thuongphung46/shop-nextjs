@@ -2,11 +2,13 @@
 
 "use client";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { useCart } from "@/context/CartContext";
 import { currency } from "@/utils/format";
 import { useState } from "react";
 
 export default function CartPage() {
+  const { data: session } = useSession();
   const {
     items,
     removeItem,
@@ -223,9 +225,18 @@ export default function CartPage() {
             <Link className="btn-secondary text-center" href="/">
               Tiếp tục mua
             </Link>
-            <Link className="btn-primary text-center" href="/checkout">
-              Thanh toán
-            </Link>
+            {session ? (
+              <Link className="btn-primary text-center" href="/checkout">
+                Thanh toán
+              </Link>
+            ) : (
+              <Link
+                className="btn-primary text-center"
+                href="/login?callbackUrl=/checkout"
+              >
+                Đăng nhập để thanh toán
+              </Link>
+            )}
           </div>
         </div>
       )}
