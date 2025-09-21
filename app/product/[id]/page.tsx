@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { products } from "@/lib/products";
 import ProductDetailClient from "@/components/ProductDetailClient";
+import Contact from "@/components/Contact";
 
 type Props = {
   params: { id: string };
@@ -83,5 +84,10 @@ export default function ProductDetailPage({ params }: Props) {
     notFound();
   }
 
-  return <ProductDetailClient product={product} />;
+  return (
+    <div>
+      <ProductDetailClient product={product} />
+      <Contact />
+    </div>
+  );
 }
