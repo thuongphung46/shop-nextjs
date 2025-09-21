@@ -9,7 +9,7 @@ import ImageWithSkeleton from "./ImageWithSkeleton";
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
-    <div className="rounded-2xl border border-border bg-card shadow-card">
+    <div className="rounded-2xl border border-border bg-card shadow-card min-h-60">
       {/* Desktop view */}
       <div className="hidden md:block p-4">
         <Link href={`/product/${product.id}`}>
@@ -46,11 +46,11 @@ export default function ProductCard({ product }: { product: Product }) {
 
       {/* Mobile view - simplified */}
       <Link href={`/product/${product.id}`} className="md:hidden block">
-        <div className="p-2">
+        <div className="p-1">
           <ImageWithSkeleton
             src={product.image}
             alt={product.name}
-            className="w-full h-32 mb-2"
+            className="w-full h-40 mb-2 object-cover"
           />
           <h3 className="text-sm font-medium line-clamp-2 mb-1">
             {product.name}
