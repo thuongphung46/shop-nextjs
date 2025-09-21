@@ -5,6 +5,7 @@ import { signIn, getSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
+import Contact from "@/components/Contact";
 
 function LoginContent() {
   const router = useRouter();
@@ -142,6 +143,7 @@ export default function LoginPage() {
       }
     >
       <LoginContent />
+      <Contact />
     </Suspense>
   );
 }

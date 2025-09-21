@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import { currency } from "@/utils/format";
+import Contact from "@/components/Contact";
 
 export default function CheckoutPage() {
   const { data: session, status } = useSession();
@@ -267,6 +268,9 @@ export default function CheckoutPage() {
           </div>
         </div>
       )}
+
+      {/* Contact Section */}
+      <Contact />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { useCart } from "@/context/CartContext";
 import { currency } from "@/utils/format";
 import { useState } from "react";
+import Contact from "@/components/Contact";
 
 export default function CartPage() {
   const { data: session } = useSession();
@@ -240,6 +241,9 @@ export default function CartPage() {
           </div>
         </div>
       )}
+
+      {/* Contact Section */}
+      <Contact />
     </div>
   );
 }

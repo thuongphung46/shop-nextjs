@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { Metadata } from "next";
 import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import SearchableProductList from "@/components/SearchableProductList";
+import Contact from "@/components/Contact";
 
 export const metadata: Metadata = {
   title: "Shop Nhà Làm - Sản phẩm thủ công chất lượng cao",
@@ -59,6 +60,9 @@ export default function HomePage() {
       >
         <SearchableProductList />
       </Suspense>
+
+      {/* Contact Section */}
+      <Contact />
     </div>
   );
 }
