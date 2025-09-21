@@ -34,4 +34,8 @@ export const authOptions: NextAuthOptions = {
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
+  // Đảm bảo URL được set đúng cho production
+  ...(process.env.NEXTAUTH_URL && {
+    url: process.env.NEXTAUTH_URL,
+  }),
 };
