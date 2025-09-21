@@ -3,15 +3,14 @@
 "use client";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState<string | null>(null);
-  //   const callbackUrl = searchParams.get("callbackUrl") || "/";
-  const callbackUrl = "/";
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   useEffect(() => {
     // Check if user is already logged in
@@ -113,5 +112,36 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <div className="w-full max-w-md p-6 bg-card border border-border rounded-2xl shadow-card">
+            <div className="text-center mb-6">
+              <h1 className="text-2xl font-bold mb-2">Đăng nhập</h1>
+              <p className="text-muted-foreground">
+                Đăng nhập để tiếp tục mua sắm
+              </p>
+            </div>
+            <div className="space-y-3">
+              <div className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-border rounded-xl bg-background opacity-50">
+                <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                <span className="font-medium">Đang tải...</span>
+              </div>
+              <div className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-border rounded-xl bg-background opacity-50">
+                <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                <span className="font-medium">Đang tải...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 }
